@@ -2,15 +2,11 @@ import type { Board, Player, GamePhase, Move } from '../game/type';
 import { WINNING_COMBINATIONS } from '../game/Constants';
 import { getLegalMoves, simulateMove } from '../game/gameUtils';
 
-
- // Vérification  de victoire
- 
 const checkWinCondition = (board: Board, player: Player): boolean => {
   return WINNING_COMBINATIONS.some(combination =>
     combination.every(index => board[index] === player)
   );
 };
-
 
 const evaluateBoard = (board: Board): number => {
   if (checkWinCondition(board, 'O')) return 10000;
@@ -18,11 +14,9 @@ const evaluateBoard = (board: Board): number => {
 
   let score = 0;
 
-  // Valorisation stratégique du centre 
   if (board[4] === 'O') score += 30;
   if (board[4] === 'X') score -= 30;
 
-  // Analyse des lignes et combinaisons potentielles
   for (const line of WINNING_COMBINATIONS) {
     let oCount = 0;
     let xCount = 0;
@@ -34,11 +28,8 @@ const evaluateBoard = (board: Board): number => {
       else emptyCount++;
     }
 
-    // IA proche de gagner ou menant la ligne
     if (oCount === 2 && emptyCount === 1) score += 100;
     if (oCount === 1 && emptyCount === 2) score += 10;
-
-    // Humain proche de gagner  ou menant la ligne
     if (xCount === 2 && emptyCount === 1) score -= 100;
     if (xCount === 1 && emptyCount === 2) score -= 10;
   }
@@ -46,7 +37,6 @@ const evaluateBoard = (board: Board): number => {
   return score;
 };
 
-//  réinitialisée à chaque coup
 const transpositionTable = new Map<string, number>();
 
 function alphaBeta(
@@ -56,9 +46,9 @@ function alphaBeta(
   beta: number,
   isMaximizing: boolean,
   phase: GamePhase,
-  pionsPlaces: number
+  pionsPlaces: number,
+  maxDepth: number
 ): number {
-  // Clé de transposition unique pour le cache
   const cacheKey = `${board.join('')}_${phase}_${isMaximizing}_${pionsPlaces}`;
   if (transpositionTable.has(cacheKey)) {
     return transpositionTable.get(cacheKey)!;
@@ -66,17 +56,11 @@ function alphaBeta(
 
   const score = evaluateBoard(board);
 
-  // Conditions d'arrêt d
-  if (score === 10000) return score - depth; //  le chemin le plus court
-  if (score === -10000) return score + depth; //  retarder la défaite
+  if (score >= 10000) return score - depth;
+  if (score <= -10000) return score + depth;
 
-  //  profondeur variable selon la phase
-  const MAX_DEPTH = phase === 'placement' ? 8 : 12;
-  if (depth >= MAX_DEPTH) {
-    return score;
-  }
+  if (depth >= maxDepth) return score;
 
-  //  gestion de phase simulée
   let currentSimulatedPhase = phase;
   if (phase === 'placement' && pionsPlaces >= 6) {
     currentSimulatedPhase = 'mouvement';
@@ -85,9 +69,8 @@ function alphaBeta(
   const activePlayer: Player = isMaximizing ? 'O' : 'X';
   const moves = getLegalMoves(board, activePlayer, currentSimulatedPhase);
 
-  if (moves.length === 0) return 0; // match nul ou blocage 
+  if (moves.length === 0) return 0;
 
-  // Tri des coups 
   const orderedMoves = [...moves].sort((a, b) => {
     const boardA = simulateMove(board, a, activePlayer);
     const boardB = simulateMove(board, b, activePlayer);
@@ -103,17 +86,14 @@ function alphaBeta(
     for (const move of orderedMoves) {
       const nextBoard = simulateMove(board, move, 'O');
       const evaluation = alphaBeta(
-        nextBoard,
-        depth + 1,
-        alpha,
-        beta,
-        false,
-        currentSimulatedPhase, 
-        phase === 'placement' ? pionsPlaces + 1 : pionsPlaces
+        nextBoard, depth + 1, alpha, beta, false,
+        currentSimulatedPhase,
+        phase === 'placement' ? pionsPlaces + 1 : pionsPlaces,
+        maxDepth
       );
       maxEval = Math.max(maxEval, evaluation);
       alpha = Math.max(alpha, evaluation);
-      if (beta <= alpha) break; // Coupure Beta
+      if (beta <= alpha) break;
     }
     result = maxEval;
   } else {
@@ -121,85 +101,88 @@ function alphaBeta(
     for (const move of orderedMoves) {
       const nextBoard = simulateMove(board, move, 'X');
       const evaluation = alphaBeta(
-        nextBoard,
-        depth + 1,
-        alpha,
-        beta,
-        true,
-        currentSimulatedPhase, 
-        phase === 'placement' ? pionsPlaces + 1 : pionsPlaces
+        nextBoard, depth + 1, alpha, beta, true,
+        currentSimulatedPhase,
+        phase === 'placement' ? pionsPlaces + 1 : pionsPlaces,
+        maxDepth
       );
       minEval = Math.min(minEval, evaluation);
       beta = Math.min(beta, evaluation);
-      if (beta <= alpha) break; // Coupure Alpha
+      if (beta <= alpha) break;
     }
     result = minEval;
   }
 
-  // Enregistrement du résultat calculé dans la table de transposition
   transpositionTable.set(cacheKey, result);
   return result;
 }
 
-
- // Fonction principale de prise de décision de l'IA 
-
-export const getBestMove = (board: Board, phase: GamePhase, pionsPlaces: number): Move | null => {
-
+export const getBestMove = (
+  board: Board,
+  phase: GamePhase,
+  pionsPlaces: number,
+  difficulty: 'facile' | 'moyen' | 'difficile' = 'difficile',
+  player: Player = 'O'
+): Move | null => {
   transpositionTable.clear();
 
-  const moves = getLegalMoves(board, 'O', phase);
+  const opponent: Player = player === 'O' ? 'X' : 'O';
+  const moves = getLegalMoves(board, player, phase);
   if (moves.length === 0) return null;
 
+  // Mode facile : aléatoire pur
+  if (difficulty === 'facile') {
+    return moves[Math.floor(Math.random() * moves.length)];
+  }
 
+  // Mode moyen : 50% aléatoire, 50% alpha-beta depth 4
+  if (difficulty === 'moyen' && Math.random() < 0.5) {
+    return moves[Math.floor(Math.random() * moves.length)];
+  }
+
+  const maxDepth = difficulty === 'moyen'
+    ? (phase === 'placement' ? 4 : 6)
+    : (phase === 'placement' ? 8 : 12);
+
+  // Victoire immédiate
   for (const move of moves) {
-    const nextBoard = simulateMove(board, move, 'O');
-    if (checkWinCondition(nextBoard, 'O')) {
+    const nextBoard = simulateMove(board, move, player);
+    if (WINNING_COMBINATIONS.some(c => c.every(i => nextBoard[i] === player))) {
       return move;
     }
   }
-  
-  const immediateHumanMoves = getLegalMoves(board, 'X', phase);
-  const winningHumanMoves = immediateHumanMoves.filter(hMove => 
-    checkWinCondition(simulateMove(board, hMove, 'X'), 'X')
-  );
 
-
-  if (winningHumanMoves.length > 0) {
-    // Si on est en phase de placement, l'ia doiut placer son pion sur la case visée par l'humain
-    if (phase === 'placement') {
-      const targetCell = winningHumanMoves[0].to;
-      const blockingMove = moves.find(m => m.to === targetCell);
-      if (blockingMove) return blockingMove;
-    } 
-    // phase mouvement, on cherche le coup qui bloque la trajectoire
-    else {
-      // On laisse Alpha-Beta gérer la priorité 
+  // Blocage immédiat de l'adversaire
+  const opponentMoves = getLegalMoves(board, opponent, phase);
+  for (const hMove of opponentMoves) {
+    const nextBoard = simulateMove(board, hMove, opponent);
+    if (WINNING_COMBINATIONS.some(c => c.every(i => nextBoard[i] === opponent))) {
+      if (phase === 'placement') {
+        const block = moves.find(m => m.to === hMove.to);
+        if (block) return block;
+      }
     }
   }
 
-  // Lancement de la recherche principale Alpha-Beta 
+  // Alpha-Beta principal
   let bestMove: Move | null = null;
-  let bestValue = -Infinity;
+  let bestValue = player === 'O' ? -Infinity : Infinity;
 
   for (const move of moves) {
-    const nextBoard = simulateMove(board, move, 'O');
+    const nextBoard = simulateMove(board, move, player);
     const moveValue = alphaBeta(
-      nextBoard,
-      0,
-      -Infinity,
-      Infinity,
-      false,
+      nextBoard, 0, -Infinity, Infinity,
+      player !== 'O', // si le joueur courant est O, le prochain nœud est minimisant
       phase,
-      phase === 'placement' ? pionsPlaces + 1 : pionsPlaces
+      phase === 'placement' ? pionsPlaces + 1 : pionsPlaces,
+      maxDepth
     );
 
-    if (moveValue > bestValue) {
+    if (player === 'O' ? moveValue > bestValue : moveValue < bestValue) {
       bestValue = moveValue;
       bestMove = move;
     }
   }
-
 
   return bestMove || moves[0];
 };

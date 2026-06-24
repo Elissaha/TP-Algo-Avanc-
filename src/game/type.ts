@@ -1,19 +1,30 @@
-
 export type Player = 'X' | 'O';
 export type CellValue = Player | null;
-export type Board = CellValue[]; // Un tableau de 9 éléments
+export type Board = CellValue[];
 
 export type GamePhase = 'placement' | 'mouvement';
+export type GameMode = 'hvh' | 'hvia' | 'iavia';
+export type Difficulty = 'facile' | 'moyen' | 'difficile';
 
 export interface GameState {
   board: Board;
   phase: GamePhase;
   pionsPlaces: number;
   currentPlayer: Player;
-  selectedPiece: number | null; // Index de 0 à 8
+  selectedPiece: number | null;
   winner: Player | null;
 }
+
 export interface Move {
-  from: number | null; // null en phase 1 (placement)
+  from: number | null;
   to: number;
+}
+
+export interface HistoryEntry {
+  board: Board;
+  phase: GamePhase;
+  pionsPlaces: number;
+  currentPlayer: Player;
+  selectedPiece: number | null;
+  winner: Player | null;
 }
