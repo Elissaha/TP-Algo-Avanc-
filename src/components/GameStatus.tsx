@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function GameStatus({
-  winner, currentPlayer, gameMode, difficulty,
+  winner, currentPlayer, 
   phase, pionsPlaces, scores, getPlayerName, isAITurn,
 }: Props) {
   const phaseLabel = phase === 'placement'

@@ -24,17 +24,19 @@ const POSITIONS = [
 
 // Toutes les arêtes du Fanoron-telo (selon ADJACENCY_LIST sans doublons)
 const EDGES: [number, number][] = [
-  [0,1],[1,2],[3,4],[4,5],[6,7],[7,8],   // lignes horizontales
-  [0,3],[3,6],[1,4],[4,7],[2,5],[5,8],   // lignes verticales
-  [0,4],[4,8],[2,4],[4,6],               // diagonales
-  [0,3],[1,4],[2,5],[3,6],[4,7],[5,8],   // déjà inclus mais ok
+  [0,1],[1,2],[3,4],[4,5],[6,7],[7,8],
+  [0,3],[3,6],[1,4],[4,7],[2,5],[5,8],
+  [0,4],[4,8],[2,4],[4,6],
+  [0,3],[1,4],[2,5],[3,6],[4,7],[5,8],
 ].filter((e, i, arr) =>
-  arr.findIndex(a => (a[0]===e[0]&&a[1]===e[1])||(a[0]===e[1]&&a[1]===e[0])) === i
-);
+  arr.findIndex(a =>
+    (a[0] === e[0] && a[1] === e[1]) ||
+    (a[0] === e[1] && a[1] === e[0])
+  ) === i
+) as [number, number][];
 
 export default function GameBoard({
-  board, selectedPiece, handleCellClick, winner,
-  currentPlayer, isAITurn, legalMovesForSelected,
+  board, selectedPiece, handleCellClick, winner, isAITurn, legalMovesForSelected,
 }: Props) {
   return (
     <div className="flex justify-center mt-6">

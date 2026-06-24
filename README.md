@@ -24,7 +24,7 @@
 | RASOARIJAOANA Volatiana Zoé | 43 | IGGLIA4 | UI/UX Designer — Plateau SVG, design responsive, animations |
 | RABEARISOA Heriniaina Liantsoa | 44 | IGGLIA4 | Backend Architect — Logique de jeu, gestion des phases, règles |
 | RAVALISON Fanevampifaliana Josia | 56 | IGGLIA4 | Expert Optimisation — Table de transposition, move ordering |
-| RANARISSON Haingoniaiko Lucka | 60 | IGGLIA4 | Lead DevOps — Déploiement Vercel, README, intégration Git |
+| RANARISSON Haingoniaiko Lucka | 60 | IGGLIA4 | Lead DevOps — Déploiement Netlify, README, intégration Git |
 
 ---
 
@@ -76,7 +76,7 @@ src/
 - **Tailwind CSS 4** — Styles utilitaires responsive
 - **Vercel** — Déploiement continu depuis GitHub
 
-**Lien vers la version hébergée :** 🔗 [https://fanoron-telo.vercel.app](https://fanoron-telo.vercel.app)
+**Lien vers la version hébergée :** 🔗 [https://fanorin-telo-devteam.netlify.app/](https://fanorin-telo-devteam.netlify.app/)
 
 ---
 
