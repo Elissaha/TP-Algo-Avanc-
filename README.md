@@ -74,7 +74,7 @@ src/
 - **React 19** + **TypeScript 6** — Interface et logique réactive typée
 - **Vite 8** — Build ultra-rapide
 - **Tailwind CSS 4** — Styles utilitaires responsive
-- **Vercel** — Déploiement continu depuis GitHub
+- **Netlify** — Déploiement continu depuis GitHub
 
 **Lien vers la version hébergée :** 🔗 [https://fanorin-telo-devteam.netlify.app/](https://fanorin-telo-devteam.netlify.app/)
 
