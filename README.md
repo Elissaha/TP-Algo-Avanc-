@@ -20,11 +20,11 @@
 
 | Nom Complet | Numéro d'étudiant | Classe | Rôle précis pour ce TP |
 |---|---|---|---|
-| RAMANANTENSOA Elissaha | 42 | INFO4 | Lead AI — Conception et implémentation de l'algorithme Alpha-Beta |
-| RASOARIJAOANA Volatiana Zoé | 43 | INFO4 | UI/UX Designer — Plateau SVG, design responsive, animations |
-| RABEARISOA Heriniaina Liantsoa | 44 | INFO4 | Backend Architect — Logique de jeu, gestion des phases, règles |
-| RAVALISON Fanevampifaliana Josia | 56 | INFO4 | Expert Optimisation — Table de transposition, move ordering |
-| RANARISSON Haingoniaiko Lucka | 60 | INFO4 | Lead DevOps — Déploiement Vercel, README, intégration Git |
+| RAMANANTENSOA Elissaha | 42 | IGGLIA4 | Lead AI — Conception et implémentation de l'algorithme Alpha-Beta |
+| RASOARIJAOANA Volatiana Zoé | 43 | IGGLIA4 | UI/UX Designer — Plateau SVG, design responsive, animations |
+| RABEARISOA Heriniaina Liantsoa | 44 | IGGLIA4 | Backend Architect — Logique de jeu, gestion des phases, règles |
+| RAVALISON Fanevampifaliana Josia | 56 | IGGLIA4 | Expert Optimisation — Table de transposition, move ordering |
+| RANARISSON Haingoniaiko Lucka | 60 | IGGLIA4 | Lead DevOps — Déploiement Vercel, README, intégration Git |
 
 ---
 
